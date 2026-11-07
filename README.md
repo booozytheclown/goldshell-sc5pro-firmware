@@ -1,6 +1,6 @@
 # Goldshell SC5 Pro Firmware Research
 
-Independent community research into the **Goldshell SC5 Pro** ASIC miner's stock firmware, including reverse engineering, hardware configuration, fan and thermal controls, firmware upgrade mechanisms, and recovery research.
+Independent community research into the **Goldshell SC5 Pro** ASIC miner firmware, including reverse engineering, hardware configuration, thermal management, and firmware upgrade/recovery mechanisms.
 
 ## Stock Firmware 2.2.0
 
@@ -8,61 +8,71 @@ Independent community research into the **Goldshell SC5 Pro** ASIC miner's stock
 |---|---|
 | Manufacturer | Goldshell |
 | Model | **SC5 Pro** |
-| Firmware version | **2.2.0** (as identified by supplied filename; package not yet independently examined) |
+| Version | **2.2.0** (based on supplied filename; not confirmed by a running miner) |
 | Filename | `firmware-Goldshell-SC5Pro-2.2.0.cpb` |
-| Format | Goldshell `.cpb` firmware update package |
+| Format | Goldshell `.cpb` firmware package |
 | Algorithm | Blake2b / Siacoin |
-| Purpose | Archival reference and community firmware research |
-| SHA-256 | **Pending local-file verification** |
-| File size | **Pending local-file measurement** |
+| File size | **34,620,416 bytes** |
+| SHA-256 | `890dc21e8c7a814eb829998712cf8eb2cd7b8ff6f716d9bf57f7947e84fd81ec` |
 
-Find firmware downloads under [Releases](../../releases) once a release has been published.
+**[Download Firmware Release v2.2.0](https://github.com/booozytheclown/goldshell-sc5pro-firmware/releases/tag/stock-2.2.0)**
 
-**Compatibility warning:** This file is identified as firmware for the **SC5 Pro**. It must not be treated as compatible with the SC5 (non-Pro), SC Lite, SC Box, HS Box, or any other Goldshell model without independent hardware-specific validation. Cross-flashing can permanently disable a miner.
+**[Direct firmware download (.cpb)](https://github.com/booozytheclown/goldshell-sc5pro-firmware/releases/download/stock-2.2.0/firmware-Goldshell-SC5Pro-2.2.0.cpb)**
 
-**Update vs. recovery:** The `.cpb` format is used for normal Goldshell firmware updates through the miner interface. It has **not** been verified as a standalone microSD / eMMC recovery image. Do not rename or write this file directly to an SD card on the assumption that it is a raw recovery image.
+**Compatibility warning:** This package is labeled for the **SC5 Pro**, not the SC5 (non-Pro), SC Lite, SC Box, or any other miner. Do not cross-flash firmware without independent, hardware-specific verification.
+
+**Firmware update vs. recovery:** This `.cpb` is a firmware package. It has *not* been demonstrated to be a raw microSD/eMMC recovery image. Do not write it directly to an SD card or assume it restores a bricked miner.
+
+### Read-only Package Inspection
+
+- The package header identifies an internal archive named `firmware-MCB_V4_3.tgz` (**not proof** of the miner's control-board revision).
+- A gzip-compressed TAR archive starts at offset 512 bytes and includes:
+  - `firmware.ius` (43,587,072 bytes, uncompressed size)
+  - `firmware.ius.sig` (512 bytes)
+- A signature file is present, but the signature's validity and Goldshell authenticity were **not** verified. No firmware was executed or flashed.
 
 ### SHA-256 Verification
 
-After the original firmware file is available, record its SHA-256 digest and byte size here. Do not substitute a hash from a different firmware version or model.
+The SHA-256 hash was independently computed against the supplied 34,620,416-byte `.cpb` file and recorded in `firmware-Goldshell-SC5Pro-2.2.0.cpb.sha256`.
 
-Windows PowerShell:
-
-```powershell
-Get-Item -LiteralPath ".\firmware-Goldshell-SC5Pro-2.2.0.cpb" | Select-Object Name, Length
-Get-FileHash -LiteralPath ".\firmware-Goldshell-SC5Pro-2.2.0.cpb" -Algorithm SHA256
-```
-
-Linux:
-
-```bash
-sha256sum firmware-Goldshell-SC5Pro-2.2.0.cpb
-```
-
-Once a matching `.sha256` file has been published, verify it with:
+Linux (place both files together):
 
 ```bash
 sha256sum -c firmware-Goldshell-SC5Pro-2.2.0.cpb.sha256
 ```
 
-A matching SHA-256 establishes integrity relative to the published checksum; it does not independently establish manufacturer authenticity, malware-free operation, or suitability for flashing.
+Windows PowerShell:
+
+```powershell
+Get-FileHash -LiteralPath ".\firmware-Goldshell-SC5Pro-2.2.0.cpb" -Algorithm SHA256
+```
+
+Expected hash:
+
+```text
+890dc21e8c7a814eb829998712cf8eb2cd7b8ff6f716d9bf57f7947e84fd81ec
+```
+
+A matching hash demonstrates integrity relative to this reference copy; it does **not** establish manufacturer authenticity or safety.
 
 ## Research Objectives
 
-- Reverse engineer the original SC5 Pro firmware and document its embedded software components.
-- Investigate update-package structure, validation, signatures, boot process, and possible recovery paths.
-- Document miner hardware interfaces, configuration, fan speeds, and thermal controls.
-- Explore Blake2b compatibility and performance, clearly distinguishing tested findings from hypotheses.
-- Publish reproducible research and encourage community collaboration.
+- Reverse engineer the original SC5 Pro firmware and document its internal components.
+- Investigate firmware validation, signature verification, upgrade, and recovery mechanisms.
+- Document miner hardware interfaces, configuration, fan speeds, and thermal management.
+- Explore Blake2b compatibility and performance, distinguishing verified results from experiments.
+- Publish reproducible findings and encourage community development.
 
 ## Contributing
 
-Community contributions are welcome. Use GitHub Issues for discoveries, questions, and reproducible test results. Submit Pull Requests for documentation or independently developed tools.
+Community contributions are welcome! Use GitHub Issues to report findings, questions, or reproducible test results, and submit Pull Requests for documentation and independently developed tools.
 
-Do not publish passwords, wallet credentials, miner secrets, identifying serial numbers, or private configuration data. Treat all firmware modifications and flashing procedures as potentially destructive until validated.
+Do not publish passwords, wallet secrets, miner credentials, serial numbers, or personal data. Treat modified and cross-model firmware as potentially unsafe.
 
 ## Disclaimer
 
-This independent community project is **not affiliated with or endorsed by Goldshell**. Manufacturer firmware and documentation remain subject to their respective intellectual property rights; making a reference package available does not grant an open-source license to the proprietary contents.
+This is an independent community project and is **not affiliated with or endorsed by Goldshell**.
 
-No claim is made that the firmware is independently authenticated, safe, or verified to recover a failed device. Firmware modification, downgrade, cross-flashing, and recovery experiments can cause hardware damage or failure. Proceed only with an understood recovery plan and appropriate safeguards.
+Original manufacturer firmware remains subject to its intellectual property rights; publishing it for study does **not** make its proprietary contents open source.
+
+Firmware modifications and flashing carry risks including hardware damage and device failure. No guarantee is made as to package safety, authenticity, recovery capability, compatibility, or fitness for production use.
